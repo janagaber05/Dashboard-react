@@ -5,6 +5,7 @@ import Home from "../pages/Home.jsx";
 import Messages from "../pages/Messages.jsx";
 import Message from "../pages/Message.jsx";
 import Settings from "../pages/Settings.jsx";
+import Category from "../pages/Category.jsx";
 
 function Placeholder({ title }) {
   return <div style={{ padding: 24 }}><h2>{title}</h2><p>Coming soon.</p></div>;
@@ -23,8 +24,7 @@ export default function AppRoutes() {
             <Route path="/projects" element={<Placeholder title="Projects" />} />
             <Route path="/skills" element={<Placeholder title="Skills" />} />
             <Route path="/experience" element={<Placeholder title="Experience" />} />
-            <Route path="/categories" element={<Placeholder title="Categories" />} />
-            <Route path="/settings" element={<Placeholder title="Settings" />} />
+            <Route path="/categories" element={<Category />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
