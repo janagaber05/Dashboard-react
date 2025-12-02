@@ -1,0 +1,53 @@
+.btn{
+  border:0;
+  border-radius:999px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:600;
+  transition:filter .15s ease;
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:8px;
+}
+.btn:hover{filter:brightness(1.02)}
+.btn .btn-ico{width:16px;height:16px;margin-right:8px;vertical-align:-3px}
+.btn.block{width:100%}
+.btn.square{border-radius:10px}
+.btn.disabled{opacity:.6;pointer-events:none}
+
+.btn.primary{
+  background:#8a2be2;color:#fff;
+  box-shadow:0 10px 20px rgba(138,43,226,.18);
+}
+.btn.soft{
+  background:#d7c3f0;color:#6d35c7;
+  box-shadow:0 10px 20px rgba(138,43,226,.15), inset 0 0 0 1px rgba(255,255,255,.85);
+}
+.btn.ghost{
+  background:#dfcdf4;color:#6d35c7;
+}
+.btn.danger{
+  background:#edc7d1;color:#9b1a3d;
+}
+
+.btn.sm{padding:8px 12px;font-size:.9rem}
+.btn.md{padding:10px 16px}
+.btn.lg{padding:12px 20px;font-size:1.05rem}
+
+.btn.link{
+  background:transparent;color:#8a2be2;box-shadow:none
+}
+.btn.link:hover{filter:none;text-decoration:underline}
+
+/* loading spinner */
+.btn.loading .btn-label{opacity:.7}
+.btn-spinner{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.6);
+  border-top-color:#fff;
+  animation: spin .8s linear infinite
+}
+.btn.soft .btn-spinner{border-color:rgba(109,53,199,.35);border-top-color:#6d35c7}
+.btn.danger .btn-spinner{border-color:rgba(155,26,61,.35);border-top-color:#9b1a3d}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+

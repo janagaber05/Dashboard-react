@@ -1,0 +1,54 @@
+.msg-card{
+  max-width:980px;
+  margin:32px auto;
+  background:#ffffff;
+  border-radius:22px;
+  box-shadow:
+    0 30px 70px rgba(138,43,226,.06),
+    0 10px 20px rgba(0,0,0,.04);
+  padding:32px;
+}
+.msg-row{margin:18px 0}
+.msg-row.two{display:flex;gap:48px;flex-wrap:wrap}
+.msg-field{font-size:18px;color:#666666;font-weight:400}
+.msg-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:26px;
+  font-weight:400; /* regular */
+  color:#666666;
+}
+.msg-ico{width:22px;height:22px;vertical-align:-3px}
+.muted{color:#666666;margin-right:8px;font-weight:300} /* light */
+.msg-body{
+  margin:12px 0 0;
+  color:#666666;
+  line-height:1.8;
+  font-size:20px;
+  font-weight:300; /* light */
+  white-space:pre-line
+}
+.msg-actions{
+  display:flex;
+  justify-content:center;
+  gap:22px;
+  margin-top:28px
+}
+.pill{
+  border:0;
+  padding:12px 20px;
+  border-radius:999px;
+  background:#d7c3f0;
+  color:#6d35c7;
+  box-shadow:
+    0 12px 22px rgba(138,43,226,.18),
+    inset 0 0 0 1px rgba(255,255,255,.85);
+  cursor:pointer
+}
+.pill:hover{filter:brightness(1.02)}
+.pill.ghost{background:#dfcdf4;color:#6d35c7}
+.pill.danger{background:#edc7d1;color:#9b1a3d}
+hr{border:none;border-top:1px solid rgba(0,0,0,.12);margin:22px 0}
+
+
