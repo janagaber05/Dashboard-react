@@ -10,10 +10,20 @@ const sample = [
 ];
 
 export default function Category() {
-  const [tab, setTab] = useState("Category");
+  const [tab, setTab] = useState("Pages");
   const [form, setForm] = useState({
-    name: "", nameAr: "", meta: "", metaAr: "", content: "", contentAr: ""
+    name: "", nameAr: "",
+    meta: "", metaAr: "",
+    content: "", contentAr: "",
+    slug: "", metaDesc: "", metaDescAr: "",
+    img: "", imgAlt: "", imgAltAr: "",
+    status: "Draft", visibility: "Public",
+    color: "#FEF4FF"
   });
+  const [imgPreview, setImgPreview] = useState("");
+  const [tags, setTags] = useState(["UX/UI","Web Design","App Design","3D","Graphic Design","Blogs"]);
+  const [editingTagIdx, setEditingTagIdx] = useState(null);
+  const [isArabic, setIsArabic] = useState(false);
 
   function onInput(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -28,43 +38,156 @@ export default function Category() {
     alert("Saved");
   }
 
+  function onPickImage(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => {
+      setImgPreview(r.result);
+      setForm(f => ({ ...f, img: r.result }));
+    };
+    r.readAsDataURL(file);
+  }
+
   const list = JSON.parse(localStorage.getItem("categoryList") || "null") || sample;
 
   return (
     <>
       <section className="cat-card">
         <div className="tabs">
-          {["Category", "Tags", "Pages"].map((t) => (
+          {["Pages", "Tags", "Category"].map((t) => (
             <button key={t} className={"tab" + (tab === t ? " active" : "")} onClick={() => setTab(t)}>{t}</button>
           ))}
+          <button type="button" className={"lang-btn" + (isArabic ? " active" : "")} onClick={() => setIsArabic(v=>!v)}>
+            {isArabic ? "EN" : "AR"}
+          </button>
         </div>
 
         <form className="form" onSubmit={(e)=>e.preventDefault()}>
-          <div className="row">
-            <label>Name</label>
-            <input value={form.name} onChange={(e)=>onInput("name", e.target.value)} />
-          </div>
-          <div className="row">
-            <label>Name/AR</label>
-            <input value={form.nameAr} onChange={(e)=>onInput("nameAr", e.target.value)} />
-          </div>
-          <div className="row">
-            <label>Meta Tag</label>
-            <input value={form.meta} onChange={(e)=>onInput("meta", e.target.value)} />
-          </div>
-          <div className="row">
-            <label>Meta Tag/AR</label>
-            <input value={form.metaAr} onChange={(e)=>onInput("metaAr", e.target.value)} />
-          </div>
+          {tab === "Pages" ? (
+            <>
+              <div className="row">
+                <label>Name</label>
+                <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? form.nameAr : form.name} onChange={(e)=>onInput(isArabic ? "nameAr" : "name", e.target.value)} />
+              </div>
+              <div className="row">
+                <label>Slug/URL</label>
+                <input value={form.slug} onChange={(e)=>onInput("slug", e.target.value)} />
+              </div>
+              <div className="row">
+                <label>Meta Description</label>
+                <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? form.metaDescAr : form.metaDesc} onChange={(e)=>onInput(isArabic ? "metaDescAr" : "metaDesc", e.target.value)} />
+              </div>
+              <div className="row" style={{ alignItems: "start" }}>
+                <label>Featured Image</label>
+                <div style={{ width: "100%" }}>
+                  {imgPreview && <img src={imgPreview} alt="Preview" style={{ width:"100%", borderRadius:12, boxShadow:"0 6px 16px rgba(0,0,0,.12)" }} />}
+                  <div style={{ marginTop: 8, display:"flex", gap:8, alignItems:"center" }}>
+                    <input id="page-img" className="file-input" type="file" accept="image/*" onChange={onPickImage} hidden />
+                    <label htmlFor="page-img" className="file-btn">Upload Image</label>
+                    {imgPreview ? <span className="file-hint">Image selected</span> : <span className="file-hint">PNG/JPG up to 5MB</span>}
+                  </div>
+                </div>
+              </div>
+              <div className="row">
+                <label>Img Alt</label>
+                <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? form.imgAltAr : form.imgAlt} onChange={(e)=>onInput(isArabic ? "imgAltAr" : "imgAlt", e.target.value)} />
+              </div>
+              <div className="row" style={{ alignItems: "start" }}>
+                <label>Page Content</label>
+                <RichTextEditor className={isArabic ? "rte-rtl" : ""} value={isArabic ? form.contentAr : form.content} onChange={(v)=>onInput(isArabic ? "contentAr" : "content", v)} />
+              </div>
+              <div className="row">
+                <label>Statuses:</label>
+                <div>
+                  <label style={{ marginRight: 12 }}><input type="radio" name="status" checked={form.status==="Draft"} onChange={()=>onInput("status","Draft")} /> Draft</label>
+                  <label style={{ marginRight: 12 }}><input type="radio" name="status" checked={form.status==="Published"} onChange={()=>onInput("status","Published")} /> Published</label>
+                </div>
+              </div>
+              <div className="row">
+                <label>Visibility</label>
+                <div>
+                  <label style={{ marginRight: 12 }}><input type="radio" name="visibility" checked={form.visibility==="Public"} onChange={()=>onInput("visibility","Public")} /> Public</label>
+                  <label><input type="radio" name="visibility" checked={form.visibility==="Privet"} onChange={()=>onInput("visibility","Privet")} /> Privet</label>
+                </div>
+              </div>
+            </>
+          ) : tab === "Tags" ? (
+            <>
+              <div className="row">
+                <label>Name</label>
+                <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? form.nameAr : form.name} onChange={(e)=>onInput(isArabic ? "nameAr" : "name", e.target.value)} />
+              </div>
+              <div className="row" style={{ alignItems: "start" }}>
+                <label>Description</label>
+                <RichTextEditor className={isArabic ? "rte-rtl" : ""} value={isArabic ? form.contentAr : form.content} onChange={(v)=>onInput(isArabic ? "contentAr" : "content", v)} />
+              </div>
+              <div className="row">
+                <label>Color:</label>
+                <input style={{ width: 100 }} type="color" value={form.color} onChange={(e)=>onInput("color", e.target.value)} />
+                <span style={{ marginLeft: 8, color: "#7b46c7", fontSize: 12 }}>{form.color.toUpperCase()}</span>
+              </div>
 
-          <div className="row" style={{ alignItems: "start" }}>
-            <label>Content</label>
-            <RichTextEditor value={form.content} onChange={(v)=>onInput("content", v)} />
-          </div>
-          <div className="row" style={{ alignItems: "start" }}>
-            <label>Content/AR</label>
-            <RichTextEditor value={form.contentAr} onChange={(v)=>onInput("contentAr", v)} />
-          </div>
+              <div className="row" style={{ alignItems: "start" }}>
+                <label>Tag List</label>
+                <div className="tag-list">
+                  {tags.map((t, i) => (
+                    <div className="tag-item" key={i}>
+                      <div className="tag-dot" style={{ background: form.color }} />
+                      <div className="tag-name">{t}</div>
+                      <div className="tag-actions">
+                        <img
+                          className="tag-ico"
+                          src={process.env.PUBLIC_URL + "/icons/pencil-sm.svg"}
+                          alt="edit"
+                          onClick={() => { setEditingTagIdx(i); setForm(f => ({...f, name: t})); }}
+                        />
+                        <img
+                          className="tag-ico"
+                          src={process.env.PUBLIC_URL + "/icons/trash-sm.svg"}
+                          alt="delete"
+                          onClick={() => setTags(tags.filter((_,idx)=>idx!==i))}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="tag-actions-row">
+                    <button
+                      type="button"
+                      className="mini-btn"
+                      onClick={()=>{
+                        if (!form.name?.trim()) return;
+                        if (editingTagIdx!==null){
+                          setTags(tags.map((t,idx)=> idx===editingTagIdx ? form.name.trim() : t));
+                          setEditingTagIdx(null);
+                        } else {
+                          setTags([ ...tags, form.name.trim() ]);
+                        }
+                        setForm(f=>({...f, name:""}));
+                      }}
+                    >
+                      {editingTagIdx!==null ? "Save" : "Add"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="row">
+                <label>Name</label>
+                <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? form.nameAr : form.name} onChange={(e)=>onInput(isArabic ? "nameAr" : "name", e.target.value)} />
+              </div>
+              <div className="row">
+                <label>Meta Tag</label>
+                <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? form.metaAr : form.meta} onChange={(e)=>onInput(isArabic ? "metaAr" : "meta", e.target.value)} />
+              </div>
+              <div className="row" style={{ alignItems: "start" }}>
+                <label>Content</label>
+                <RichTextEditor className={isArabic ? "rte-rtl" : ""} value={isArabic ? form.contentAr : form.content} onChange={(v)=>onInput(isArabic ? "contentAr" : "content", v)} />
+              </div>
+            </>
+          )}
 
           <div className="cat-actions">
             <Button variant="primary" onClick={save}>Save</Button>

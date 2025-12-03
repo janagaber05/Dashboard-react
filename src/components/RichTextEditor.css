@@ -1,7 +1,7 @@
 .rte{
   background:linear-gradient(180deg,#f5d9ff,#f0ccff 70%);
   border-radius:16px;
-  border:2px solid #a24be0;
+  border:1px solid #e08df3;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
   width:100%;
   max-width:100%;
@@ -57,7 +57,8 @@
 .rte-btn.align-left .rte-ico-line{margin-left:0;margin-right:auto}
 .rte-btn.align-center .rte-ico-line{margin-left:auto;margin-right:auto}
 .rte-btn.align-right .rte-ico-line{margin-left:auto;margin-right:0}
-.rte-editable{min-height:160px;padding:12px;border-top:3px solid #a24be0;border-radius:0 0 14px 14px;outline:none;background:#fff;box-sizing:border-box}
+.rte-editable{min-height:160px;padding:12px;border-top:1px solid #e08df3;border-radius:0 0 14px 14px;outline:none;background:#fff;box-sizing:border-box}
 .rte-editable:empty:before{content:attr(data-placeholder);color:#9a8aa8}
+.rte-rtl .rte-editable{direction:rtl;text-align:right}
 
 

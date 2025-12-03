@@ -4,19 +4,26 @@ import Button from "../components/Button.jsx";
 
 export default function Settings() {
   const [name, setName] = useState("");
+  const [nameAr, setNameAr] = useState("");
   const [job, setJob] = useState("");
+  const [jobAr, setJobAr] = useState("");
   const [bio, setBio] = useState("");
+  const [bioAr, setBioAr] = useState("");
   const [socials, setSocials] = useState({
     instagram: "", facebook: "", tiktok: "", linkedin: "", behance: ""
   });
   const [photo, setPhoto] = useState("/logo192.png");
   const fileRef = useRef(null);
+  const [isArabic, setIsArabic] = useState(false);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("profileSettings") || "{}");
     setName(saved.name || "Jana Ahmed Ahmed Gaber");
+    setNameAr(saved.nameAr || "");
     setJob(saved.job || "UX UI Designer | Graphic Designer | Web Designer | Content Creator | Sales");
+    setJobAr(saved.jobAr || "");
     setBio(saved.bio || "I’m Jana a hijabi girl with a designer’s eye and a car lover’s heart. I mix pixels and horsepower like it’s an art form. I believe every design (and every car) should have personality, attitude, and a little chaos — just like me.");
+    setBioAr(saved.bioAr || "");
     setSocials({
       instagram: saved.instagram || "",
       facebook: saved.facebook || "",
@@ -29,7 +36,9 @@ export default function Settings() {
 
   function save() {
     localStorage.setItem("profileSettings", JSON.stringify({
-      name, job, bio,
+      name, nameAr,
+      job, jobAr,
+      bio, bioAr,
       ...socials,
       photo: photo !== "/logo192.png" ? photo : undefined
     }));
@@ -54,26 +63,36 @@ export default function Settings() {
   return (
     <section className="set-card">
       <div className="set-header">
-        <img className="set-avatar" src={photo} alt="Profile" />
+        <img
+          className="set-avatar"
+          src={photo}
+          alt="Profile"
+          onError={(e)=>{ e.currentTarget.onerror=null; e.currentTarget.src="/logo192.png"; }}
+        />
         <div>
           <button className="edit-link" onClick={() => fileRef.current?.click()}>✎ Edit Profile Picture</button>
           <button className="edit-link" onClick={removePhoto} style={{ marginLeft: 10 }}>🗑 Remove</button>
         </div>
         <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPick} />
+        <div className="lang-switch">
+          <button type="button" className={"lang-btn" + (isArabic ? " active" : "")} onClick={()=>setIsArabic(v=>!v)}>
+            {isArabic ? "EN" : "AR"}
+          </button>
+        </div>
       </div>
 
       <form className="set-form" onSubmit={(e)=>e.preventDefault()}>
         <div className="field">
           <label>Name:</label>
-          <input value={name} onChange={(e)=>setName(e.target.value)} />
+          <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? nameAr : name} onChange={(e)=> (isArabic ? setNameAr(e.target.value) : setName(e.target.value))} />
         </div>
         <div className="field">
           <label>Job :</label>
-          <input value={job} onChange={(e)=>setJob(e.target.value)} />
+          <input dir={isArabic ? "rtl" : "ltr"} value={isArabic ? jobAr : job} onChange={(e)=> (isArabic ? setJobAr(e.target.value) : setJob(e.target.value))} />
         </div>
         <div className="field">
           <label>Bio:</label>
-          <textarea value={bio} onChange={(e)=>setBio(e.target.value)} />
+          <textarea dir={isArabic ? "rtl" : "ltr"} value={isArabic ? bioAr : bio} onChange={(e)=> (isArabic ? setBioAr(e.target.value) : setBio(e.target.value))} />
         </div>
 
         <div className="grid2">

@@ -12,12 +12,17 @@ export default function Nva() {
         aria-label="Open menu"
         onClick={() => setOpen((v) => !v)}
       >
-        <span></span><span></span><span></span>
+        <img className="nv-ico" src="/icons/menu.svg" alt="Menu" />
       </button>
       <div className={"nv-backdrop" + (open ? " nv-show" : "")} onClick={close} />
       <aside className={"nv-sidebar" + (open ? " nv-open" : "")}>
         <div className="nv-profile">
-          <img className="nv-avatar" src="/logo192.png" alt="Profile" />
+          <img
+            className="nv-avatar"
+            src={process.env.PUBLIC_URL + "/logo192.png"}
+            alt="Profile"
+            onError={(e)=>{ e.currentTarget.onerror=null; e.currentTarget.src="/logo192.png"; }}
+          />
           <div className="nv-name">Jana Gaber</div>
           <div className="nv-email">Janagaber9201@gmail.com</div>
         </div>
@@ -29,10 +34,7 @@ export default function Nva() {
             <img className="nv-ico" src="/icons/folder.svg" alt="" />Projects
           </NavLink>
           <NavLink to="/skills" className={({isActive}) => "nv-link" + (isActive ? " nv-active" : "")}>
-            <img className="nv-ico" src="/icons/star.svg" alt="" />Skills
-          </NavLink>
-          <NavLink to="/experience" className={({isActive}) => "nv-link" + (isActive ? " nv-active" : "")}>
-            <img className="nv-ico" src="/icons/briefcase.svg" alt="" />Experience
+            <img className="nv-ico" src="/icons/star.svg" alt="" />Skills, Experience
           </NavLink>
           <NavLink to="/categories" className={({isActive}) => "nv-link" + (isActive ? " nv-active" : "")}>
             <img className="nv-ico" src="/icons/folder.svg" alt="" />Categories

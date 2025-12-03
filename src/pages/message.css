@@ -39,15 +39,15 @@
   border:0;
   padding:12px 20px;
   border-radius:999px;
-  background:#d7c3f0;
-  color:#6d35c7;
+  background:#f2ccff;
+  color:#b85ad6;
   box-shadow:
-    0 12px 22px rgba(138,43,226,.18),
+    0 12px 22px rgba(224,141,243,.18),
     inset 0 0 0 1px rgba(255,255,255,.85);
   cursor:pointer
 }
 .pill:hover{filter:brightness(1.02)}
-.pill.ghost{background:#dfcdf4;color:#6d35c7}
+.pill.ghost{background:#f6e6fb;color:#b85ad6}
 .pill.danger{background:#edc7d1;color:#9b1a3d}
 hr{border:none;border-top:1px solid rgba(0,0,0,.12);margin:22px 0}
 
