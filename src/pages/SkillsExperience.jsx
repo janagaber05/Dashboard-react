@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import "./skillsEx.css";
+import RichTextEditor from "../components/RichTextEditor.jsx";
 
 const initialSkills = [
   { name: "Figma", nameAr: "", level: "Intermediate" },
@@ -9,9 +10,9 @@ const initialSkills = [
 ];
 
 const initialExp = [
-  { title: "Front End Course", company: "CLS", date: "2024/2024", desc: "Front end code course located..." },
-  { title: "Front End Course", company: "CLS", date: "2024/2024", desc: "Front end code course located..." },
-  { title: "Front End Course", company: "CLS", date: "2024/2024", desc: "Front end code course located..." },
+  { title: "Front End Course", titleAr: "", company: "CLS", from: "2024", to: "2024", desc: "Front end code course located...", descAr: "" },
+  { title: "Front End Course", titleAr: "", company: "CLS", from: "2024", to: "2024", desc: "Front end code course located...", descAr: "" },
+  { title: "Front End Course", titleAr: "", company: "CLS", from: "2024", to: "2024", desc: "Front end code course located...", descAr: "" },
 ];
 
 function Pager({ page, totalPages, onPrev, onNext, onGoto }) {
@@ -33,6 +34,12 @@ export default function SkillsExperience() {
   const [skillIsArabic, setSkillIsArabic] = useState(false);
   const [skillForm, setSkillForm] = useState({ name: "", nameAr: "", level: "Beginner" });
   const [skillEditIdx, setSkillEditIdx] = useState(null);
+  const [expModalOpen, setExpModalOpen] = useState(false);
+  const [expIsArabic, setExpIsArabic] = useState(false);
+  const [expForm, setExpForm] = useState({
+    title: "", titleAr: "", company: "", from: "", to: "", desc: "", descAr: ""
+  });
+  const [expEditIdx, setExpEditIdx] = useState(null);
 
   // pagination (simple client chunks)
   const [sPage, setSPage] = useState(1);
@@ -71,20 +78,29 @@ export default function SkillsExperience() {
   }
 
   function addExp() {
-    const title = window.prompt("Title");
-    if (!title) return;
-    const company = window.prompt("Company");
-    const date = window.prompt("Date", "2024/2024");
-    const desc = window.prompt("Description", "Front end code course located...") || "";
-    setExperiences([{ title, company, date, desc }, ...experiences]);
+    setExpForm({ title:"", titleAr:"", company:"", from:"", to:"", desc:"", descAr:"" });
+    setExpEditIdx(null);
+    setExpIsArabic(false);
+    setExpModalOpen(true);
   }
   function editExp(idx) {
     const cur = experiences[idx];
-    const title = window.prompt("Edit title", cur.title) || cur.title;
-    const company = window.prompt("Edit company", cur.company) || cur.company;
-    const date = window.prompt("Edit date", cur.date) || cur.date;
-    const desc = window.prompt("Edit description", cur.desc) || cur.desc;
-    setExperiences(experiences.map((e, i) => i === idx ? { title, company, date, desc } : e));
+    setExpForm({
+      title: cur.title || "", titleAr: cur.titleAr || "", company: cur.company || "",
+      from: cur.from || "", to: cur.to || "", desc: cur.desc || "", descAr: cur.descAr || ""
+    });
+    setExpEditIdx(idx);
+    setExpIsArabic(false);
+    setExpModalOpen(true);
+  }
+  function saveExp() {
+    const data = { ...expForm };
+    if (expEditIdx === null) {
+      setExperiences([data, ...experiences]);
+    } else {
+      setExperiences(experiences.map((e,i)=> i===expEditIdx ? data : e));
+    }
+    setExpModalOpen(false);
   }
   function delExp(idx) {
     if (!window.confirm("Delete this item?")) return;
@@ -144,7 +160,7 @@ export default function SkillsExperience() {
             <div className="tr" key={i}>
               <div className="td">{r.title}</div>
               <div className="td">{r.company}</div>
-              <div className="td">{r.date}</div>
+              <div className="td">{`${r.from}/${r.to}`}</div>
               <div className="td">{r.desc}</div>
               <div className="td">
                 <div className="acts">
@@ -195,6 +211,46 @@ export default function SkillsExperience() {
               <button className="btn primary" onClick={saveSkill}>Save</button>
               <button className="btn ghost" onClick={()=>setSkillModalOpen(false)}>Cancel</button>
               {skillEditIdx!==null && <button className="btn danger" onClick={()=>{ delSkill(skillEditIdx); setSkillModalOpen(false);} }>Delete</button>}
+            </div>
+          </div>
+        </>
+      )}
+
+      {expModalOpen && (
+        <>
+          <div className="sx-backdrop" onClick={()=>setExpModalOpen(false)} />
+          <div className="sx-modal" role="dialog" aria-modal="true">
+            <h3 className="sx-modal-title">Add Experience</h3>
+            <div className="sx-lang">
+              <button className={"lang-btn" + (expIsArabic ? " active" : "")} onClick={()=>setExpIsArabic(v=>!v)} type="button">
+                {expIsArabic ? "EN" : "AR"}
+              </button>
+            </div>
+            <div className="sx-field">
+              <label>Experience Title</label>
+              <input
+                dir={expIsArabic ? "rtl" : "ltr"}
+                value={expIsArabic ? expForm.titleAr : expForm.title}
+                onChange={(e)=> setExpForm(f => ({ ...f, [expIsArabic ? "titleAr" : "title"]: e.target.value }))}
+              />
+            </div>
+            <div className="sx-field">
+              <label>Company Name</label>
+              <input value={expForm.company} onChange={(e)=> setExpForm(f => ({ ...f, company: e.target.value }))} />
+            </div>
+            <div className="sx-two">
+              <div className="sx-field"><label>From</label><input value={expForm.from} onChange={(e)=> setExpForm(f => ({ ...f, from: e.target.value }))} placeholder="From" /></div>
+              <div className="sx-field"><label>To</label><input value={expForm.to} onChange={(e)=> setExpForm(f => ({ ...f, to: e.target.value }))} placeholder="To" /></div>
+            </div>
+            <div className="sx-field" style={{ alignItems: "start" }}>
+              <label>Description</label>
+              <RichTextEditor className={expIsArabic ? "rte-rtl" : ""} value={expIsArabic ? expForm.descAr : expForm.desc}
+                onChange={(v)=> setExpForm(f => ({ ...f, [expIsArabic ? "descAr" : "desc"]: v }))} />
+            </div>
+            <div className="sx-actions">
+              <button className="btn primary" onClick={saveExp}>Save</button>
+              <button className="btn ghost" onClick={()=>setExpModalOpen(false)}>Cancel</button>
+              {expEditIdx!==null && <button className="btn danger" onClick={()=>{ delExp(expEditIdx); setExpModalOpen(false); }}>Delete</button>}
             </div>
           </div>
         </>

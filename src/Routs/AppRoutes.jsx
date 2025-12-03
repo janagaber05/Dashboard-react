@@ -6,6 +6,7 @@ import Messages from "../pages/Messages.jsx";
 import Message from "../pages/Message.jsx";
 import Settings from "../pages/Settings.jsx";
 import SkillsExperience from "../pages/SkillsExperience.jsx";
+import Projects from "../pages/Projects.jsx";
 import Category from "../pages/Category.jsx";
 
 function Placeholder({ title }) {
@@ -22,7 +23,7 @@ export default function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/message" element={<Message />} />
-            <Route path="/projects" element={<Placeholder title="Projects" />} />
+            <Route path="/projects" element={<Projects />} />
             <Route path="/skills" element={<SkillsExperience />} />
             <Route path="/experience" element={<SkillsExperience />} />
             <Route path="/categories" element={<Category />} />

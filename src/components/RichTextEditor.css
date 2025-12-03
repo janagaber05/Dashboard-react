@@ -24,9 +24,9 @@
 .rte-spacer{flex:1}
 .rte-select{
   border:0;appearance:none;-webkit-appearance:none;
-  background:linear-gradient(180deg,#bf8cf0,#a062e1);
+  background:linear-gradient(180deg,#f0a4ff,#e08df3);
   color:#ffffff;border-radius:28px;padding:10px 22px;font-weight:700;font-size:18px;
-  box-shadow:0 18px 30px rgba(138,43,226,.20), inset 0 0 0 1px rgba(255,255,255,.55);
+  box-shadow:0 18px 30px rgba(224,141,243,.20), inset 0 0 0 1px rgba(255,255,255,.55);
 }
 .rte-dd{position:relative}
 .rte-dd-btn{

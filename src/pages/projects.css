@@ -1,0 +1,79 @@
+.proj-wrap{max-width:1100px;margin:0 auto}
+.proj-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 10px 0}
+.pill-btn{border:1px solid #e08df3;background:#fff;color:#d04fe8;border-radius:22px;padding:8px 14px;cursor:pointer;box-shadow:0 6px 14px rgba(224,141,243,.16)}
+.right{display:flex;gap:12px;align-items:center}
+.filter .lbl{margin-right:6px;color:#3b2a41}
+.lang-btn{border:1px solid #e08df3;background:#fff;color:#d04fe8;border-radius:20px;padding:6px 12px;cursor:pointer;box-shadow:0 4px 10px rgba(224,141,243,.15)}
+.lang-btn.active{background:#fbe6ff}
+.search{width:360px;border:1px solid #e08df3;border-radius:20px;padding:8px 12px}
+
+.proj-list{display:grid;gap:12px}
+.proj-row{display:grid;grid-template-columns:80px 1.6fr 1fr auto;gap:14px;align-items:center;background:#fff;border-radius:16px;padding:12px;box-shadow:0 10px 24px rgba(0,0,0,.06)}
+.thumb{width:80px;height:60px;border-radius:10px;background:#f1e6ff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb .ph{width:60px;height:40px;background:#e6d9f3;border-radius:8px}
+.title{font-weight:700;color:#3b2a41}
+.desc{font-size:14px;color:#666}
+.link{font-size:12px;color:#d04fe8;text-decoration:none}
+.tag{background:#eee;border-radius:12px;padding:6px 10px;font-size:12px;color:#666}
+.actions{display:flex;gap:10px;align-items:center;justify-content:flex-end}
+.actions .lang{font-size:12px;color:#666;border:1px solid #e08df3;border-radius:10px;padding:4px 8px}
+.mini{border:0;border-radius:12px;padding:6px 10px;background:#f0f; background:#e08df3;color:#fff;cursor:pointer}
+.meta-text{font-size:12px;text-align:center;color:#666;margin-top:6px}
+
+/* reuse modal styles */
+.sx-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1000}
+.sx-modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(640px, 92%);background:#fff;border-radius:20px;
+  box-shadow:0 30px 70px rgba(0,0,0,.18);padding:16px;z-index:1001;
+  max-height:80vh;overflow:auto;-webkit-overflow-scrolling:touch
+}
+.sx-modal-title{text-align:center;margin:0 0 12px 0;color:#777;font-size:28px}
+.sx-lang{text-align:right;margin-bottom:8px}
+.file-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#e08df3;color:#fff;cursor:pointer;box-shadow:0 8px 16px rgba(224,141,243,.20)}
+.file-hint{color:#7b46c7;font-size:12px}
+.sx-field{display:grid;gap:6px;margin:10px 0}
+.sx-field label{color:#8a2be2;font-weight:600}
+.sx-field input{border:1px solid #e08df3;background:linear-gradient(180deg,#fff0ff,#fbe6ff 80%);padding:12px;border-radius:12px}
+.sx-actions{display:flex;gap:12px;justify-content:center;margin-top:14px}
+.btn{border:0;border-radius:999px;padding:10px 18px;cursor:pointer}
+.btn.primary{background:#e08df3;color:#fff;box-shadow:0 10px 20px rgba(224,141,243,.22)}
+.btn.ghost{background:#f6e6fb;color:#d04fe8}
+.btn.danger{background:#edc7d1;color:#9b1a3d}
+/* Category select styling */
+.sel{
+  width:100%;
+  border:1px solid #e08df3;
+  border-radius:22px;
+  padding:10px 40px 10px 14px;
+  background:
+    linear-gradient(180deg,#fff0ff,#fbe6ff 80%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23d04fe8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>") no-repeat right 14px center/16px;
+  appearance:none;-webkit-appearance:none;cursor:pointer;color:#3b2a41
+}
+.sel:focus{outline:none;box-shadow:0 0 0 3px rgba(224,141,243,.18)}
+
+@media (max-width:900px){
+  .proj-row{grid-template-columns:60px 1fr;grid-auto-rows:auto}
+  .meta,.actions{justify-self:start}
+  .search{width:200px}
+}
+/* Narrow phone layout like screenshot */
+@media (max-width:600px){
+  .proj-row{
+    grid-template-columns:1fr;
+    padding:16px;
+    row-gap:8px
+  }
+  .thumb{
+    width:140px;height:110px;justify-self:end;margin-bottom:4px
+  }
+  .main .title{font-size:16px}
+  .main .desc{font-size:13px}
+  .meta{margin-top:6px}
+  .actions{justify-content:flex-start;gap:12px}
+  .actions .mini{padding:6px 12px}
+}
+
+
