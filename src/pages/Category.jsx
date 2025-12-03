@@ -30,11 +30,11 @@ export default function Category() {
   }
 
   function save() {
-    // A real app would POST. For now just store locally.
+    
     const list = JSON.parse(localStorage.getItem("categoryList") || "[]");
     list.unshift({ type: tab, name: form.name || "(Untitled)", desc: form.meta || "—" });
     localStorage.setItem("categoryList", JSON.stringify(list.slice(0, 20)));
-    // eslint-disable-next-line no-alert
+    
     alert("Saved");
   }
 

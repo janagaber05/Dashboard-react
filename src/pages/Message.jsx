@@ -17,8 +17,7 @@ export default function Message() {
   };
 
   const markAsRead = () => {
-    // In a real app, call API or update store; here we just notify and go back
-    // eslint-disable-next-line no-alert
+    
     alert("Marked as read");
     navigate(-1);
   };
@@ -27,8 +26,8 @@ export default function Message() {
     window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}`;
   };
   const del = () => {
-    // eslint-disable-next-line no-restricted-globals
-    const ok = confirm("Delete this message?");
+
+    const ok = window.confirm("Delete this message?");
     if (ok) navigate(-1);
   };
 

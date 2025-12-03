@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Nva from "../components/Nva.jsx";
 import Home from "../pages/Home.jsx";
@@ -8,16 +8,18 @@ import Settings from "../pages/Settings.jsx";
 import SkillsExperience from "../pages/SkillsExperience.jsx";
 import Projects from "../pages/Projects.jsx";
 import Category from "../pages/Category.jsx";
+import LogoutModal from "../components/LogoutModal.jsx";
 
 function Placeholder({ title }) {
   return <div style={{ padding: 24 }}><h2>{title}</h2><p>Coming soon.</p></div>;
 }
 
 export default function AppRoutes() {
+  const [showLogout, setShowLogout] = useState(false);
   return (
     <BrowserRouter>
       <div className="nv-app">
-        <Nva />
+        <Nva onLogout={() => setShowLogout(true)} />
         <div className="nv-content">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -32,6 +34,7 @@ export default function AppRoutes() {
           </Routes>
         </div>
       </div>
+      <LogoutModal open={showLogout} onClose={() => setShowLogout(false)} />
     </BrowserRouter>
   );
 }

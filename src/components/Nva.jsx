@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./nav.css";
 
-export default function Nva() {
+export default function Nva({ onLogout }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
   return (
@@ -45,9 +45,9 @@ export default function Nva() {
           <NavLink to="/settings" className={({isActive}) => "nv-link" + (isActive ? " nv-active" : "")}>
             <img className="nv-ico" src="/icons/settings.svg" alt="" />Settings
           </NavLink>
-          <a className="nv-link" href="#logout">
+          <button className="nv-link" onClick={(e)=>{ e.preventDefault(); onLogout && onLogout(); }}>
             <img className="nv-ico" src="/icons/power.svg" alt="" />Log-Out
-          </a>
+          </button>
         </nav>
       </aside>
     </>

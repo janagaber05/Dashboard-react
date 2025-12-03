@@ -3,7 +3,7 @@ import "./home.css";
 
 export default function Home() {
   useEffect(() => {
-    // animate performance bars after mount
+   
     const bars = document.querySelectorAll(".bar");
     bars.forEach((b) => {
       const v = Number(b.getAttribute("data-value") || 0);
@@ -16,12 +16,12 @@ export default function Home() {
     const width = 160;
     const height = 90;
     const padding = 10;
-    const labelGutter = 18; // space on the right for numeric ticks
+    const labelGutter = 18; 
     const left = padding;
     const right = width - padding - labelGutter;
     const top = padding + 6;
     const bottom = height - padding - 6;
-    // Normalize incoming values to 0..100 so we can display fixed tick labels (0,20,50,80,100)
+   
     const rawMin = Math.min(...values);
     const rawMax = Math.max(...values);
     const rawRange = rawMax - rawMin || 1;
@@ -39,7 +39,7 @@ export default function Home() {
       };
     });
 
-    // Catmull–Rom smoothing to cubic Bezier
+   
     const pathFrom = (p) => {
       if (!p.length) return "";
       let d = `M ${p[0].x} ${p[0].y}`;
@@ -60,7 +60,7 @@ export default function Home() {
     const d = pathFrom(pts);
     const area = `${d} L ${right} ${bottom} L ${left} ${bottom} Z`;
 
-    // Build month labels (last N months)
+    
     const names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const now = new Date();
     const months = values.map((_, i) => {
@@ -68,8 +68,7 @@ export default function Home() {
       return names[d.getMonth()];
     });
 
-    // y ticks
-    // Fixed y-axis labels as requested
+  
     const tickVals = [0, 20, 50, 80, 100];
     const fmt = (n) => String(n);
 
@@ -81,17 +80,17 @@ export default function Home() {
           return (
             <g key={i}>
               <line x1={left} y1={y} x2={right} y2={y} className="grid-line" />
-              {/* place numbers just outside the plot area on the right */}
+              {}
               <text x={right + 4} y={y + 3} className="tick-label-y" textAnchor="start">
                 {fmt(tv)}
               </text>
             </g>
           );
         })}
-        {/* axis */}
+        {}
         <line x1={left} y1={bottom} x2={right} y2={bottom} className="axis-line" />
         <line x1={left} y1={bottom} x2={left} y2={top} className="axis-line" />
-        {/* area + line */}
+        {}
         <defs>
           <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="rgba(255,255,255,0.35)" />
@@ -100,7 +99,7 @@ export default function Home() {
         </defs>
         <path d={area} className="area" fill="url(#areaGrad)" />
         <path d={d} className="line" />
-        {/* x labels (months) - show ~4 labels */}
+        {}
         {months.map((m, i) => {
           const step = Math.max(1, Math.ceil(values.length / 4));
           if (i % step !== 0) return null;

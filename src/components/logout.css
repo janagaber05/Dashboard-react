@@ -1,0 +1,29 @@
+.lg-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:2000
+}
+.lg-modal{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(440px,92%);
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 30px 70px rgba(0,0,0,.18);
+  padding:20px;
+  z-index:2001;
+  text-align:center
+}
+.lg-icon{
+  width:56px;height:56px;line-height:56px;margin:0 auto 8px;
+  background:linear-gradient(180deg,#fff0ff,#fbe6ff 80%);
+  border:1px solid #e08df3;border-radius:50%;color:#d04fe8;font-size:24px
+}
+.lg-title{margin:6px 0 4px 0;color:#3b2a41}
+.lg-text{color:#666;margin:0 0 14px 0}
+.lg-actions{display:flex;gap:10px;justify-content:center}
+
+

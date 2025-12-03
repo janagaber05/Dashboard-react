@@ -52,7 +52,6 @@ export default function Projects() {
   const [query, setQuery] = useState("");
   const [langFilter, setLangFilter] = useState("EN");
 
-  // modal state
   const [open, setOpen] = useState(false);
   const [isArabic, setIsArabic] = useState(false);
   const [form, setForm] = useState({
@@ -67,7 +66,6 @@ export default function Projects() {
   });
   const [editIdx, setEditIdx] = useState(null);
 
-  // pagination
   const [page, setPage] = useState(1);
   const perPage = 6;
   const filtered = useMemo(() => {
