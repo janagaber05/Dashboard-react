@@ -89,7 +89,7 @@ export default function Category() {
               <div className="td">{r.desc}</div>
               <div className="td">
                 <div className="acts">
-                  <img src={process.env.PUBLIC_URL + "/icons/eye.svg"} alt="view" />
+                  <img src={process.env.PUBLIC_URL + "/icons/pencil.svg"} alt="edit" />
                   <img src={process.env.PUBLIC_URL + "/icons/trash.svg"} alt="delete" />
                 </div>
               </div>

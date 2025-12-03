@@ -7,12 +7,12 @@ const Row = ({ name, email, subject, date, status, body }) => {
   const open = () => navigate("/message", { state: { name, email, subject, date, status, body } });
   return (
     <div className="tr">
-      <div className="td">{name}</div>
-      <div className="td">{email}</div>
-      <div className="td">{subject}</div>
-      <div className="td">{date}</div>
-      <div className="td">{status}</div>
-      <div className="td actions">
+      <div className="td" data-label="Name">{name}</div>
+      <div className="td" data-label="Email">{email}</div>
+      <div className="td" data-label="Subject">{subject}</div>
+      <div className="td" data-label="Date">{date}</div>
+      <div className="td" data-label="Status">{status}</div>
+      <div className="td actions" data-label="Action">
         <img onClick={open} src={process.env.PUBLIC_URL + "/icons/eye.svg"} alt="view" />
         <img src={process.env.PUBLIC_URL + "/icons/check.svg"} alt="mark" />
         <img src={process.env.PUBLIC_URL + "/icons/trash.svg"} alt="delete" />

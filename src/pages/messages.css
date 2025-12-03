@@ -21,21 +21,15 @@
 .meta{font-size:12px;text-align:center;color:#666;margin-top:6px}
 
 /* Mobile: turn table into cards */
-@media (max-width:920px){
+@media (max-width:1200px){
   .thead{display:none}
   .tbody{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .tbody .tr{grid-template-columns:1fr;padding:16px}
   .td + .td{border:0;border-top:1px solid rgba(0,0,0,.06);margin-top:6px;padding-top:8px}
   .tbody .tr .actions{justify-content:flex-start}
-  .tbody .tr .td::before{display:block;font-weight:700;color:#666;margin-bottom:4px}
-  .tbody .tr .td:nth-child(1)::before{content:"Name:"}
-  .tbody .tr .td:nth-child(2)::before{content:"Email:"}
-  .tbody .tr .td:nth-child(3)::before{content:"Subject:"}
-  .tbody .tr .td:nth-child(4)::before{content:"Date:"}
-  .tbody .tr .td:nth-child(5)::before{content:"Status:"}
-  .tbody .tr .td:nth-child(6)::before{content:"Action:"}
+  .tbody .tr .td::before{display:block;font-weight:700;color:#666;margin-bottom:4px;content:attr(data-label) ":"}
 }
-@media (max-width:560px){
+@media (max-width:700px){
   .tbody{grid-template-columns:1fr}
 }
 

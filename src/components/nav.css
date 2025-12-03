@@ -6,7 +6,7 @@
 }
 
 /* App layout shell (sidebar + content) */
-.nv-app{display:flex;min-height:100vh;background:var(--bg);color:var(--text)}
+.nv-app{display:flex;min-height:100vh;background:var(--bg);color:var(--text);overflow-x:hidden}
 .nv-content{flex:1;padding:30px 36px}
 
 /* Sidebar */
