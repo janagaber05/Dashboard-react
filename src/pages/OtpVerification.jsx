@@ -120,7 +120,7 @@ export default function OtpVerification() {
     <div className="otp-container">
       <img 
         className="otp-illustration" 
-        src={process.env.PUBLIC_URL + "/img/login-illustration.png"} 
+        src={process.env.PUBLIC_URL + "/img/Login_pic/login-pic.png"} 
         alt="OTP illustration" 
       />
       <div className="otp-card">

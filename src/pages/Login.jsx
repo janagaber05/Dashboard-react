@@ -48,7 +48,7 @@ export default function Login() {
     <div className="login-container">
       <img 
         className="login-illustration" 
-        src={process.env.PUBLIC_URL + "/img/login-illustration.png"} 
+        src={process.env.PUBLIC_URL + "/img/Login_pic/login-pic.png"} 
         alt="Login illustration" 
       />
       <div className="login-card">
