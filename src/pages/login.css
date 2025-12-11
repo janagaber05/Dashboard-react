@@ -9,9 +9,20 @@
   overflow: hidden;
 }
 
+.login-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(50px) saturate(150%);
+  -webkit-backdrop-filter: blur(50px) saturate(150%);
+  z-index: 0;
+  pointer-events: none;
+}
+
 .login-illustration {
   position: absolute;
-  left: -10%;
+  left: 18%;
   top: 50%;
   transform: translateY(-50%);
   width: 65%;
@@ -20,6 +31,7 @@
   object-fit: contain;
   z-index: 0;
   opacity: 1;
+  filter: blur(0.5px);
 }
 
 .login-container::before {
@@ -36,14 +48,15 @@
 }
 
 .login-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15),
-              0 10px 20px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2),
+              0 10px 20px rgba(0, 0, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 0 rgba(255, 255, 255, 0.4);
   padding: 48px 40px;
   width: 100%;
   max-width: 440px;
@@ -63,7 +76,14 @@
   
   .login-card {
     margin-right: 0;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2),
+                0 10px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.3);
   }
 }
 
