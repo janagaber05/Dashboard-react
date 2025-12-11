@@ -35,13 +35,18 @@ export default function Settings() {
   }, []);
 
   function save() {
-    localStorage.setItem("profileSettings", JSON.stringify({
+    const savedData = {
       name, nameAr,
       job, jobAr,
       bio, bioAr,
       ...socials,
       photo: photo !== "/logo192.png" ? photo : undefined
-    }));
+    };
+    localStorage.setItem("profileSettings", JSON.stringify(savedData));
+    
+    // Dispatch custom event to update sidebar in real-time
+    window.dispatchEvent(new Event("profileSettingsUpdated"));
+    
     // eslint-disable-next-line no-alert
     alert("Saved");
   }
@@ -50,7 +55,16 @@ export default function Settings() {
     const file = e.target.files?.[0];
     if (!file) return;
     const r = new FileReader();
-    r.onload = () => setPhoto(r.result);
+    r.onload = () => {
+      const newPhoto = r.result;
+      setPhoto(newPhoto);
+      // Update localStorage immediately when photo is selected
+      const saved = JSON.parse(localStorage.getItem("profileSettings") || "{}");
+      saved.photo = newPhoto;
+      localStorage.setItem("profileSettings", JSON.stringify(saved));
+      // Dispatch event to update sidebar
+      window.dispatchEvent(new Event("profileSettingsUpdated"));
+    };
     r.readAsDataURL(file);
   }
   function removePhoto() {
@@ -58,6 +72,8 @@ export default function Settings() {
     const saved = JSON.parse(localStorage.getItem("profileSettings") || "{}");
     delete saved.photo;
     localStorage.setItem("profileSettings", JSON.stringify(saved));
+    // Dispatch event to update sidebar
+    window.dispatchEvent(new Event("profileSettingsUpdated"));
   }
 
   return (

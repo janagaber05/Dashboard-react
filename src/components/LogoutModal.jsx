@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../utils/auth";
 import "./logout.css";
 import Button from "./Button.jsx";
 
@@ -7,8 +8,12 @@ export default function LogoutModal({ open, onClose }) {
   const navigate = useNavigate();
   if (!open) return null;
   const doLogout = () => {
+    // Clear authentication
+    auth.logout();
+    // Close modal
     onClose && onClose();
-    navigate("/");
+    // Redirect to login page
+    navigate("/login", { replace: true });
   };
   return (
     <>
