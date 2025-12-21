@@ -1,39 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import "./projects.css";
 import RichTextEditor from "../components/RichTextEditor.jsx";
-
-const seed = [
-  {
-    title: "Giza Zoo Website",
-    titleAr: "",
-    desc: "A website that represent giza zoo in funny childish way",
-    descAr: "",
-    tag: "Web Design",
-    link: "https://github-link...",
-    lang: "EN",
-    img: "",
-  },
-  {
-    title: "Giza Zoo Website",
-    titleAr: "",
-    desc: "A website that represent giza zoo in funny childish way",
-    descAr: "",
-    tag: "Web Design",
-    link: "https://github-link...",
-    lang: "EN",
-    img: "",
-  },
-  {
-    title: "Giza Zoo Website",
-    titleAr: "",
-    desc: "A website that represent giza zoo in funny childish way",
-    descAr: "",
-    tag: "Web Design",
-    link: "https://github-link...",
-    lang: "EN",
-    img: "",
-  },
-];
+import { supabase } from "../utils/supabase";
 
 function Pager({ page, totalPages, onPrev, onNext, onGoto }) {
   return (
@@ -48,7 +16,8 @@ function Pager({ page, totalPages, onPrev, onNext, onGoto }) {
 }
 
 export default function Projects() {
-  const [projects, setProjects] = useState(seed);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [langFilter, setLangFilter] = useState("EN");
 
@@ -64,7 +33,28 @@ export default function Projects() {
     imgAlt: "", imgAltAr: "",
     lang: "EN", img: ""
   });
-  const [editIdx, setEditIdx] = useState(null);
+  const [editId, setEditId] = useState(null);
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setProjects(data || []);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+      setProjects([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [page, setPage] = useState(1);
   const perPage = 6;
@@ -92,27 +82,42 @@ export default function Projects() {
       lang: "EN", img: ""
     });
     setIsArabic(false);
-    setEditIdx(null);
+    setEditId(null);
     setOpen(true);
   }
-  function openEdit(idx) {
-    setForm(projects[idx]);
+  function openEdit(project) {
+    setForm(project);
     setIsArabic(false);
-    setEditIdx(idx);
+    setEditId(project.id);
     setOpen(true);
   }
-  function save() {
-    const data = { ...form };
-    if (editIdx === null) {
-      setProjects([data, ...projects]);
-    } else {
-      setProjects(projects.map((p,i)=> i===editIdx ? data : p));
+  async function save() {
+    try {
+      const data = { ...form };
+      if (editId === null) {
+        const { error } = await supabase.from('projects').insert([data]);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from('projects').update(data).eq('id', editId);
+        if (error) throw error;
+      }
+      await loadProjects();
+      setOpen(false);
+    } catch (error) {
+      console.error('Error saving project:', error);
+      alert('Failed to save project: ' + error.message);
     }
-    setOpen(false);
   }
-  function del(idx) {
+  async function del(id) {
     if (!window.confirm("Delete project?")) return;
-    setProjects(projects.filter((_,i)=> i!==idx));
+    try {
+      const { error } = await supabase.from('projects').delete().eq('id', id);
+      if (error) throw error;
+      await loadProjects();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('Failed to delete project: ' + error.message);
+    }
   }
 
   function onPick(e) {
@@ -141,24 +146,30 @@ export default function Projects() {
       </div>
 
       <div className="proj-list">
-        {view.map((p, i) => (
-          <div className="proj-row" key={i}>
-            <div className="thumb">{p.img ? <img src={p.img} alt="" /> : <div className="ph" />}</div>
-            <div className="main">
-              <div className="title">{p.title}</div>
-              <div className="desc">{p.desc}</div>
-              <a className="link" href={p.link} target="_blank" rel="noreferrer">{p.link}</a>
+        {loading ? (
+          <div style={{ padding: "40px", textAlign: "center" }}>Loading projects...</div>
+        ) : view.length === 0 ? (
+          <div style={{ padding: "40px", textAlign: "center" }}>No projects found</div>
+        ) : (
+          view.map((p) => (
+            <div className="proj-row" key={p.id}>
+              <div className="thumb">{p.img ? <img src={p.img} alt="" /> : <div className="ph" />}</div>
+              <div className="main">
+                <div className="title">{p.title}</div>
+                <div className="desc">{p.desc}</div>
+                <a className="link" href={p.link} target="_blank" rel="noreferrer">{p.link}</a>
+              </div>
+              <div className="meta">
+                <span className="tag"># {p.tag}</span>
+              </div>
+              <div className="actions">
+                <span className="lang">{p.lang}</span>
+                <button className="mini" onClick={()=> openEdit(p)}>Edit</button>
+                <img className="tag-ico" src={process.env.PUBLIC_URL + "/icons/trash-sm.svg"} alt="delete" onClick={()=> del(p.id)} />
+              </div>
             </div>
-            <div className="meta">
-              <span className="tag"># {p.tag}</span>
-            </div>
-            <div className="actions">
-              <span className="lang">{p.lang}</span>
-              <button className="mini" onClick={()=> openEdit((page-1)*perPage + i)}>Edit</button>
-              <img className="tag-ico" src={process.env.PUBLIC_URL + "/icons/trash-sm.svg"} alt="delete" onClick={()=> del((page-1)*perPage + i)} />
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <Pager
@@ -174,7 +185,7 @@ export default function Projects() {
         <>
           <div className="sx-backdrop" onClick={()=> setOpen(false)} />
           <div className="sx-modal small" role="dialog" aria-modal="true">
-            <h3 className="sx-modal-title">{editIdx===null ? "Add New Project" : "Edit Project"}</h3>
+            <h3 className="sx-modal-title">{editId===null ? "Add New Project" : "Edit Project"}</h3>
             <div className="sx-field">
               <label>Project Title</label>
               <input value={form.title} onChange={(e)=> setForm(f => ({ ...f, title: e.target.value }))} />
@@ -236,7 +247,7 @@ export default function Projects() {
             <div className="sx-actions">
               <button className="btn primary" onClick={save}>Save</button>
               <button className="btn ghost" onClick={()=> setOpen(false)}>Cancel</button>
-              {editIdx!==null && <button className="btn danger" onClick={()=>{ del(editIdx); setOpen(false); }}>Delete</button>}
+              {editId!==null && <button className="btn danger" onClick={()=>{ del(editId); setOpen(false); }}>Delete</button>}
             </div>
           </div>
         </>

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../utils/supabase";
 import "./messages.css";
 
 const Row = ({ name, email, subject, date, status, body }) => {
@@ -22,28 +23,54 @@ const Row = ({ name, email, subject, date, status, body }) => {
 };
 
 export default function Messages() {
-  const data = Array.from({ length: 6 }, () => ({
-    name: "Salma Ahmed",
-    email: "SalmaAhmed12@mail.com",
-    subject: "Chance To Work",
-    date: "12/5/25",
-    status: Math.random() > 0.5 ? "New" : "Read",
-    body:
-      "Hi, I loved your portfolio and I’d like you to design\n\na website for my bakery. Please contact me...",
-  }));
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const totalPages = 3;
+  const perPage = 6;
+
+  useEffect(() => {
+    loadMessages();
+  }, []);
+
+  const loadMessages = async () => {
+    try {
+      const { data: messages, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setData(messages || []);
+    } catch (error) {
+      console.error('Error loading messages:', error);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalPages = Math.max(1, Math.ceil(data.length / perPage));
+  const paginatedData = data.slice((page - 1) * perPage, page * perPage);
+  const newCount = data.filter(m => m.status === "New" || m.status === "Unread").length;
+  const readCount = data.filter(m => m.status === "Read").length;
+
   const goPrev = () => setPage((p) => Math.max(1, p - 1));
   const goNext = () => setPage((p) => Math.min(totalPages, p + 1));
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
+  };
   return (
     <div className="msgs-wrap">
       <div className="msg-toolbar">
         <label className="radio"><input type="radio" name="f" defaultChecked /> Un Read</label>
         <label className="radio"><input type="radio" name="f" /> Read</label>
         <div style={{ marginLeft: "auto", display: "inline-flex", gap: 10 }}>
-          <span className="pill">Total 45</span>
-          <span className="pill">New 12</span>
-          <span className="pill">Read 15</span>
+          <span className="pill">Total {data.length}</span>
+          <span className="pill">New {newCount}</span>
+          <span className="pill">Read {readCount}</span>
         </div>
       </div>
       <div className="table">
@@ -56,17 +83,23 @@ export default function Messages() {
           <div className="th">Action</div>
         </div>
         <div className="tbody">
-          {data.map((r, i) => <Row key={i} {...r} />)}
+          {loading ? (
+            <div style={{ padding: "40px", textAlign: "center", gridColumn: "1 / -1" }}>Loading messages...</div>
+          ) : paginatedData.length === 0 ? (
+            <div style={{ padding: "40px", textAlign: "center", gridColumn: "1 / -1" }}>No messages found</div>
+          ) : (
+            paginatedData.map((r) => <Row key={r.id} {...r} date={formatDate(r.date || r.created_at)} />)
+          )}
         </div>
       </div>
       <div className="pg">
         <button onClick={goPrev} className={page === 1 ? "disabled" : ""}>{"«"}</button>
-        {[1,2,3].map((n)=>(
+        {Array.from({ length: totalPages }, (_, n) => n + 1).map((n)=>(
           <button key={n} className={"num" + (page===n ? " active" : "")} onClick={()=>setPage(n)}>{n}</button>
         ))}
         <button onClick={goNext} className={page === totalPages ? "disabled" : ""}>{"»"}</button>
       </div>
-      <div className="meta">Showing 1-6 of 20 Messages</div>
+      <div className="meta">Showing {paginatedData.length > 0 ? (page - 1) * perPage + 1 : 0}-{Math.min(data.length, page * perPage)} of {data.length} Messages</div>
     </div>
   );
 }

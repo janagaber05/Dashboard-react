@@ -135,6 +135,7 @@ export default function OtpVerification() {
         <p className="otp-description">
           Please enter the OTP (One-Time Password) sent to your registered email/phone number to complete your verification
         </p>
+
         
         <form className="otp-form" onSubmit={handleVerify}>
           <div className="otp-inputs">
