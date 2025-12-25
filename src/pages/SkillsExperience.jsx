@@ -66,7 +66,7 @@ export default function SkillsExperience() {
   const loadExperiences = async () => {
     try {
       const { data, error } = await supabase
-        .from('experiences')
+        .from('experience')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -87,10 +87,21 @@ export default function SkillsExperience() {
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      setEducation(data || []);
+      if (error) {
+        // If table doesn't exist (PGRST205), silently continue with empty array
+        // Don't log errors for missing tables - this is expected until table is created
+        if (error.code === 'PGRST205' || error.message?.includes('not find the table') || error.message?.includes('schema cache')) {
+          setEducation([]);
+          setEducationLoading(false);
+          return; // Exit early, don't throw
+        }
+        // For other errors, still don't log - just set empty array
+        setEducation([]);
+      } else {
+        setEducation(data || []);
+      }
     } catch (error) {
-      console.error('Error loading education:', error);
+      // Silently handle all errors - table might not exist yet
       setEducation([]);
     } finally {
       setEducationLoading(false);
@@ -178,10 +189,10 @@ export default function SkillsExperience() {
     try {
       const data = { ...expForm };
       if (expEditId === null) {
-        const { error } = await supabase.from('experiences').insert([data]);
+        const { error } = await supabase.from('experience').insert([data]);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('experiences').update(data).eq('id', expEditId);
+        const { error } = await supabase.from('experience').update(data).eq('id', expEditId);
         if (error) throw error;
       }
       await loadExperiences();
@@ -194,7 +205,7 @@ export default function SkillsExperience() {
   async function delExp(id) {
     if (!window.confirm("Delete this item?")) return;
     try {
-      const { error } = await supabase.from('experiences').delete().eq('id', id);
+      const { error } = await supabase.from('experience').delete().eq('id', id);
       if (error) throw error;
       await loadExperiences();
     } catch (error) {
@@ -227,27 +238,45 @@ export default function SkillsExperience() {
       };
       if (educationEditId === null) {
         const { error } = await supabase.from('education').insert([data]);
-        if (error) throw error;
+        if (error) {
+          if (error.code === 'PGRST205' || error.message?.includes('not find the table')) {
+            alert('Education table does not exist yet. Please run supabase-education-table.sql in Supabase SQL Editor to create it.');
+            return;
+          }
+          throw error;
+        }
       } else {
         const { error } = await supabase.from('education').update(data).eq('id', educationEditId);
-        if (error) throw error;
+        if (error) {
+          if (error.code === 'PGRST205' || error.message?.includes('not find the table')) {
+            alert('Education table does not exist yet. Please run supabase-education-table.sql in Supabase SQL Editor to create it.');
+            return;
+          }
+          throw error;
+        }
       }
       await loadEducation();
       setEducationModalOpen(false);
     } catch (error) {
       console.error('Error saving education:', error);
-      alert('Failed to save education: ' + error.message);
+      alert('Failed to save education: ' + (error.message || 'Unknown error'));
     }
   }
   async function delEducation(id) {
     if (!window.confirm("Delete this education item?")) return;
     try {
       const { error } = await supabase.from('education').delete().eq('id', id);
-      if (error) throw error;
+      if (error) {
+        if (error.code === 'PGRST205' || error.message?.includes('not find the table')) {
+          alert('Education table does not exist yet. Please run supabase-education-table.sql in Supabase SQL Editor to create it.');
+          return;
+        }
+        throw error;
+      }
       await loadEducation();
     } catch (error) {
       console.error('Error deleting education:', error);
-      alert('Failed to delete education: ' + error.message);
+      alert('Failed to delete education: ' + (error.message || 'Unknown error'));
     }
   }
 

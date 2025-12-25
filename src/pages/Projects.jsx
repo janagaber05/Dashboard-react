@@ -93,19 +93,52 @@ export default function Projects() {
   }
   async function save() {
     try {
-      const data = { ...form };
+      // Create a clean data object without id
+      const { id, ...formData } = form;
+      
+      // Prepare data for Supabase - keep all fields but remove id
+      const data = {
+        title: formData.title || null,
+        titleAr: formData.titleAr || null,
+        metaTag: formData.metaTag || null,
+        metaTagAr: formData.metaTagAr || null,
+        metaDesc: formData.metaDesc || null,
+        metaDescAr: formData.metaDescAr || null,
+        desc: formData.desc || null,
+        descAr: formData.descAr || null,
+        tag: formData.tag || null,
+        category: formData.category || null,
+        link: formData.link || null,
+        live: formData.live || null,
+        imgAlt: formData.imgAlt || null,
+        imgAltAr: formData.imgAltAr || null,
+        lang: formData.lang || 'EN',
+        img: formData.img || null
+      };
+      
+      console.log('Saving project data:', { editId, data });
+      
       if (editId === null) {
-        const { error } = await supabase.from('projects').insert([data]);
-        if (error) throw error;
+        const { data: result, error } = await supabase.from('projects').insert([data]).select();
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
+        console.log('Project inserted successfully:', result);
       } else {
-        const { error } = await supabase.from('projects').update(data).eq('id', editId);
-        if (error) throw error;
+        const { data: result, error } = await supabase.from('projects').update(data).eq('id', editId).select();
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
+        console.log('Project updated successfully:', result);
       }
       await loadProjects();
       setOpen(false);
     } catch (error) {
       console.error('Error saving project:', error);
-      alert('Failed to save project: ' + error.message);
+      const errorMessage = error.message || error.details || error.hint || JSON.stringify(error);
+      alert('Failed to save project: ' + errorMessage);
     }
   }
   async function del(id) {
@@ -186,29 +219,34 @@ export default function Projects() {
           <div className="sx-backdrop" onClick={()=> setOpen(false)} />
           <div className="sx-modal small" role="dialog" aria-modal="true">
             <h3 className="sx-modal-title">{editId===null ? "Add New Project" : "Edit Project"}</h3>
-            <div className="sx-field">
-              <label>Project Title</label>
-              <input value={form.title} onChange={(e)=> setForm(f => ({ ...f, title: e.target.value }))} />
+            <div className="sx-lang">
+              <button type="button" className={"lang-btn" + (isArabic ? " active" : "")} onClick={()=>setIsArabic(v=>!v)}>
+                {isArabic ? "EN" : "AR"}
+              </button>
             </div>
             <div className="sx-field">
-              <label>Project Title/AR</label>
-              <input dir="rtl" value={form.titleAr} onChange={(e)=> setForm(f => ({ ...f, titleAr: e.target.value }))} />
+              <label>Project Title</label>
+              <input 
+                dir={isArabic ? "rtl" : "ltr"}
+                value={isArabic ? (form.titleAr || "") : (form.title || "")} 
+                onChange={(e)=> setForm(f => ({ ...f, [isArabic ? "titleAr" : "title"]: e.target.value }))} 
+              />
             </div>
             <div className="sx-field">
               <label>Meta Tag</label>
-              <input value={form.metaTag} onChange={(e)=> setForm(f => ({ ...f, metaTag: e.target.value }))} />
-            </div>
-            <div className="sx-field">
-              <label>Meta Tag/AR</label>
-              <input dir="rtl" value={form.metaTagAr} onChange={(e)=> setForm(f => ({ ...f, metaTagAr: e.target.value }))} />
+              <input 
+                dir={isArabic ? "rtl" : "ltr"}
+                value={isArabic ? (form.metaTagAr || "") : (form.metaTag || "")} 
+                onChange={(e)=> setForm(f => ({ ...f, [isArabic ? "metaTagAr" : "metaTag"]: e.target.value }))} 
+              />
             </div>
             <div className="sx-field">
               <label>Meta Description</label>
-              <input value={form.metaDesc} onChange={(e)=> setForm(f => ({ ...f, metaDesc: e.target.value }))} />
-            </div>
-            <div className="sx-field">
-              <label>Meta Description/AR</label>
-              <input dir="rtl" value={form.metaDescAr} onChange={(e)=> setForm(f => ({ ...f, metaDescAr: e.target.value }))} />
+              <input 
+                dir={isArabic ? "rtl" : "ltr"}
+                value={isArabic ? (form.metaDescAr || "") : (form.metaDesc || "")} 
+                onChange={(e)=> setForm(f => ({ ...f, [isArabic ? "metaDescAr" : "metaDesc"]: e.target.value }))} 
+              />
             </div>
             <div className="sx-field"><label>Tag</label><input value={form.tag} onChange={(e)=> setForm(f => ({ ...f, tag: e.target.value }))} /></div>
             <div className="sx-field"><label>Category</label>
@@ -224,11 +262,11 @@ export default function Projects() {
             <div className="sx-field"><label>Live Demo</label><input value={form.live} onChange={(e)=> setForm(f => ({ ...f, live: e.target.value }))} /></div>
             <div className="sx-field" style={{ alignItems: "start" }}>
               <label>Description</label>
-              <RichTextEditor value={form.desc} onChange={(v)=> setForm(f => ({ ...f, desc: v }))} />
-            </div>
-            <div className="sx-field" style={{ alignItems: "start" }}>
-              <label>Description/AR</label>
-              <RichTextEditor className="rte-rtl" value={form.descAr} onChange={(v)=> setForm(f => ({ ...f, descAr: v }))} />
+              <RichTextEditor 
+                className={isArabic ? "rte-rtl" : ""}
+                value={isArabic ? (form.descAr || "") : (form.desc || "")} 
+                onChange={(v)=> setForm(f => ({ ...f, [isArabic ? "descAr" : "desc"]: v }))} 
+              />
             </div>
             <div className="sx-field">
               <label>Thumbnail</label>
@@ -238,11 +276,13 @@ export default function Projects() {
                 {form.img && <span className="file-hint">Selected</span>}
               </div>
             </div>
-            <div className="sx-field"><label>Img Alt</label>
-              <input value={form.imgAlt} onChange={(e)=> setForm(f => ({ ...f, imgAlt: e.target.value }))} />
-            </div>
-            <div className="sx-field"><label>Img Alt/AR</label>
-              <input dir="rtl" value={form.imgAltAr} onChange={(e)=> setForm(f => ({ ...f, imgAltAr: e.target.value }))} />
+            <div className="sx-field">
+              <label>Img Alt</label>
+              <input 
+                dir={isArabic ? "rtl" : "ltr"}
+                value={isArabic ? (form.imgAltAr || "") : (form.imgAlt || "")} 
+                onChange={(e)=> setForm(f => ({ ...f, [isArabic ? "imgAltAr" : "imgAlt"]: e.target.value }))} 
+              />
             </div>
             <div className="sx-actions">
               <button className="btn primary" onClick={save}>Save</button>

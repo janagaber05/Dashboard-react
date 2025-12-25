@@ -1,9 +1,11 @@
 :root{
-  --bg:#faf9fc;
-  --text:#3b2a41;
-  --card1:#f4b5ff;
-  --card2:#e08df3;
-  --shadow:0 14px 28px rgba(224,141,243,0.18),0 10px 10px rgba(224,141,243,0.12)
+  --bg:#0f0f23;
+  --text:#e0e0e0;
+  --card1:#1e1e3f;
+  --card2:#252547;
+  --shadow:0 14px 28px rgba(0,0,0,0.4),0 10px 10px rgba(0,0,0,0.3);
+  --accent:#9d4edd;
+  --accent-glow:rgba(157,78,221,.3);
 }
 *{
   box-sizing:border-box
@@ -21,18 +23,25 @@ body{
   max-width:1000px;margin:10px auto 32px
 }
 .card{
-  background:linear-gradient(180deg,var(--card1),var(--card2));
+  background:linear-gradient(135deg,var(--card1),var(--card2));
   color:#fff;
   border-radius:18px;
   box-shadow:var(--shadow);
-  padding:16px 16px 12px;position:relative
+  padding:16px 16px 12px;position:relative;
+  border:1px solid rgba(255,255,255,.05);
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 32px rgba(0,0,0,0.5);
 }
 .card::before{
   content:"";
   position:absolute;
   inset:0 0 auto 0;
   height:46px;
-  background:rgba(255,255,255,.18)
+  background:linear-gradient(180deg, rgba(157,78,221,.2), transparent);
+  border-radius:18px 18px 0 0;
 }
 .card h3{
   margin:0 0 8px 0;
@@ -88,11 +97,12 @@ body{
 .wide{
   max-width:1000px;
   margin:0 auto 26px;
-  background:linear-gradient(180deg,var(--card1),var(--card2));
+  background:linear-gradient(135deg,var(--card1),var(--card2));
   color:#fff;
   border-radius:18px;
   box-shadow:var(--shadow);
-  padding:16px
+  padding:16px;
+  border:1px solid rgba(255,255,255,.05);
 }
 .wide h3{
   margin:0 0 10px
@@ -111,19 +121,20 @@ body{
 }
 .bar{
   position:relative;
-  background:rgba(255,255,255,.35);
+  background:rgba(255,255,255,.1);
   height:8px;
   border-radius:999px;
-  overflow:hidden
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.05);
 }
 .bar span{
   position:absolute;
   left:0;top:0;
   height:100%;
   width:0;
-  background:linear-gradient(90deg,#f0a4ff,#e08df3);
+  background:linear-gradient(90deg,var(--accent),#c77dff);
   border-radius:999px;
-  transition:width 1.2s ease
+  transition:width 1.2s ease;
 }
 
 .pct{
@@ -142,11 +153,17 @@ body{
   grid-template-columns:1fr auto;
   gap:20px;
   align-items:center;
-  color:#f4e8ff;font-size:14px
+  color:rgba(255,255,255,.85);
+  font-size:14px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.activity li:last-child{
+  border-bottom:none;
 }
 .activity time{
-  color:#fff;
-  opacity:.9
+  color:rgba(255,255,255,.7);
+  font-size:12px;
 }
 
 @media (max-width:1000px){

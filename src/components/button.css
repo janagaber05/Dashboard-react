@@ -15,18 +15,26 @@
 .btn.disabled{opacity:.6;pointer-events:none}
 
 .btn.primary{
-  background:#8a2be2;color:#fff;
-  box-shadow:0 10px 20px rgba(138,43,226,.18);
+  background:#9d4edd;color:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+  transition:all 0.2s ease;
+}
+.btn.primary:hover{
+  background:#b894e6;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
 }
 .btn.soft{
-  background:#d7c3f0;color:#6d35c7;
-  box-shadow:0 10px 20px rgba(138,43,226,.15), inset 0 0 0 1px rgba(255,255,255,.85);
+  background:rgba(157,78,221,.15);color:#b894e6;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+  border:1px solid rgba(157,78,221,.12);
 }
 .btn.ghost{
-  background:#dfcdf4;color:#6d35c7;
+  background:rgba(157,78,221,.12);color:#b894e6;
+  border:1px solid rgba(157,78,221,.12);
 }
 .btn.danger{
-  background:#edc7d1;color:#9b1a3d;
+  background:rgba(239,68,68,.15);color:#ff8a8a;
+  border:1px solid rgba(239,68,68,.12);
 }
 
 .btn.sm{padding:8px 12px;font-size:.9rem}
@@ -34,7 +42,7 @@
 .btn.lg{padding:12px 20px;font-size:1.05rem}
 
 .btn.link{
-  background:transparent;color:#8a2be2;box-shadow:none
+  background:transparent;color:#b894e6;box-shadow:none
 }
 .btn.link:hover{filter:none;text-decoration:underline}
 
@@ -46,8 +54,8 @@
   border-top-color:#fff;
   animation: spin .8s linear infinite
 }
-.btn.soft .btn-spinner{border-color:rgba(109,53,199,.35);border-top-color:#6d35c7}
-.btn.danger .btn-spinner{border-color:rgba(155,26,61,.35);border-top-color:#9b1a3d}
+.btn.soft .btn-spinner{border-color:rgba(199,125,255,.35);border-top-color:#c77dff}
+.btn.danger .btn-spinner{border-color:rgba(239,68,68,.35);border-top-color:#ff6b6b}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 

@@ -1,11 +1,13 @@
 :root{
-  --bg: #faf9fc;
-  --sidebar-bg:#ffffff;
-  --text:#3b2a41;
-  --muted:#8a7b91;
-  --accent:#e08df3;            /* pink accent */
-  --accent-soft: rgba(224,141,243,.18);
-  --accent-soft-2: rgba(224,141,243,.28);
+  --bg: #0f0f23;
+  --sidebar-bg:#1a1a2e;
+  --text:#e0e0e0;
+  --muted:#a0a0b0;
+  --accent:#9d4edd;            /* purple accent */
+  --accent-soft: rgba(157,78,221,.15);
+  --accent-soft-2: rgba(157,78,221,.25);
+  --card-bg: #1e1e3f;
+  --border: rgba(255,255,255,.08);
 }
 
 /* App layout shell (sidebar + content) */
@@ -35,8 +37,8 @@
   height:38px;
   border:0;
   border-radius:10px;
-  background:#ffffff;
-  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  background:var(--sidebar-bg);
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
   padding:8px;
   cursor:pointer;
   align-items:center;
@@ -71,7 +73,7 @@
   width:220px;
   min-width:220px;
   background:var(--sidebar-bg);
-  border-right:1px solid rgba(0,0,0,.05);
+  border-right:1px solid rgba(255,255,255,.05);
   padding:18px 16px;
   position:sticky;
   top:0;
@@ -93,7 +95,7 @@
 }
 
 .nv-sidebar::-webkit-scrollbar-thumb{
-  background:rgba(0,0,0,.1);
+  background:rgba(255,255,255,.15);
   border-radius:2px;
 }
 
@@ -108,7 +110,7 @@
   height:86px;
   border-radius:50%;
   object-fit:cover;
-  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  box-shadow:0 6px 16px rgba(0,0,0,.4), 0 0 0 2px var(--accent-soft);
   display:block;
   margin:0 auto;
 }
@@ -167,7 +169,7 @@
 .nv-active{
   color:var(--accent) !important;
   background:linear-gradient(180deg, var(--accent-soft-2), var(--accent-soft-2)) !important;
-  box-shadow:inset 0 0 0 1px var(--accent), 0 4px 10px rgba(224,141,243,.14);
+  box-shadow:inset 0 0 0 1px rgba(157,78,221,.4), 0 2px 8px rgba(0,0,0,.2);
 }
 
 /* Mobile styles */

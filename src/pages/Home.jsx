@@ -1,16 +1,149 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./home.css";
+import { supabase } from "../utils/supabase";
 
 export default function Home() {
+  const [stats, setStats] = useState({
+    messages: { total: 0, unread: 0, chart: [] },
+    projects: { total: 0, chart: [] },
+    skills: { total: 0 },
+    experiences: { total: 0 },
+    categories: {}
+  });
+  const [loading, setLoading] = useState(true);
+  const [recentActivity, setRecentActivity] = useState([]);
+
   useEffect(() => {
-   
+    loadStats();
+  }, []);
+
+  useEffect(() => {
+    // Update bar animations when stats load
     const bars = document.querySelectorAll(".bar");
     bars.forEach((b) => {
       const v = Number(b.getAttribute("data-value") || 0);
       const fill = b.querySelector("span");
-      requestAnimationFrame(() => (fill.style.width = Math.min(100, Math.max(0, v)) + "%"));
+      if (fill) {
+        requestAnimationFrame(() => (fill.style.width = Math.min(100, Math.max(0, v)) + "%"));
+      }
     });
-  }, []);
+  }, [stats.categories]);
+
+  const loadStats = async () => {
+    try {
+      // Load messages
+      const { data: messages, error: msgError } = await supabase
+        .from('messages')
+        .select('id, status, created_at')
+        .order('created_at', { ascending: false });
+      
+      if (msgError) throw msgError;
+      const unreadCount = (messages || []).filter(m => m.status === "New" || m.status === "Unread" || !m.status).length;
+      const messagesChart = generateMonthlyChart(messages || [], 10);
+
+      // Load projects
+      const { data: projects, error: projError } = await supabase
+        .from('projects')
+        .select('id, category, created_at')
+        .order('created_at', { ascending: false });
+      
+      if (projError) throw projError;
+      const projectsChart = generateMonthlyChart(projects || [], 10);
+      
+      // Calculate category distribution
+      const categoryCounts = {};
+      (projects || []).forEach(p => {
+        const cat = p.category || 'Uncategorized';
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+      });
+      const totalProjects = (projects || []).length;
+      const categoryPercentages = {};
+      Object.keys(categoryCounts).forEach(cat => {
+        categoryPercentages[cat] = totalProjects > 0 
+          ? Math.round((categoryCounts[cat] / totalProjects) * 100) 
+          : 0;
+      });
+
+      // Load skills
+      const { data: skills, error: skillsError } = await supabase
+        .from('skills')
+        .select('id');
+      if (skillsError) throw skillsError;
+
+      // Load experiences
+      const { data: experiences, error: expError } = await supabase
+        .from('experience')
+        .select('id');
+      if (expError) throw expError;
+
+      // Generate recent activity (combine messages, projects, experiences)
+      const activities = [];
+      (messages || []).slice(0, 5).forEach(m => {
+        activities.push({
+          text: `New message received`,
+          time: new Date(m.created_at),
+          type: 'message'
+        });
+      });
+      (projects || []).slice(0, 3).forEach(p => {
+        activities.push({
+          text: `Project "${p.title || 'Untitled'}" added`,
+          time: new Date(p.created_at),
+          type: 'project'
+        });
+      });
+      // Sort by date descending
+      activities.sort((a, b) => b.time - a.time);
+      // Format times for display
+      const formattedActivities = activities.slice(0, 5).map(a => ({
+        ...a,
+        time: formatTimeAgo(a.time)
+      }));
+      setRecentActivity(formattedActivities);
+
+      setStats({
+        messages: { total: messages?.length || 0, unread: unreadCount, chart: messagesChart },
+        projects: { total: totalProjects, chart: projectsChart },
+        skills: { total: skills?.length || 0 },
+        experiences: { total: experiences?.length || 0 },
+        categories: categoryPercentages
+      });
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateMonthlyChart = (data, count = 10) => {
+    const now = new Date();
+    const months = [];
+    for (let i = count - 1; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+      
+      const countInMonth = data.filter(item => {
+        const itemDate = new Date(item.created_at);
+        return itemDate >= monthStart && itemDate <= monthEnd;
+      }).length;
+      
+      months.push(countInMonth);
+    }
+    return months;
+  };
+
+  const formatTimeAgo = (date) => {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} min ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+    return date.toLocaleDateString();
+  };
 
   const MiniChart = ({ values = [] }) => {
     const width = 160;
@@ -114,75 +247,88 @@ export default function Home() {
     );
   };
 
+  const categoryEntries = Object.entries(stats.categories || {}).sort((a, b) => b[1] - a[1]);
+
+  if (loading) {
+    return <div style={{ padding: "40px", textAlign: "center" }}>Loading dashboard...</div>;
+  }
+
   return (
     <>
       <section className="grid">
         <article className="card">
-          <h3>Messages Card</h3>
-          <p className="sub"><img className="icon-s" src="/icons/mail.svg" alt="" /> 12,000 Messages Unread</p>
-          <div className="chart"><MiniChart values={[8,10,12,9,13,16,14,18,22,20]} /></div>
+          <h3>Messages</h3>
+          <p className="sub">
+            <img className="icon-s" src="/icons/mail.svg" alt="" /> 
+            {stats.messages.unread} Unread of {stats.messages.total} Total
+          </p>
+          <div className="chart">
+            <MiniChart values={stats.messages.chart.length > 0 ? stats.messages.chart : [0,0,0,0,0,0,0,0,0,0]} />
+          </div>
         </article>
 
         <article className="card">
-          <h3>Most Viewed</h3>
-          <p className="sub"><img className="icon-s" src="/icons/star.svg" alt="" /> 12,000 Viewers</p>
-          <div className="chart"><MiniChart values={[6,7,8,9,11,12,12,14,16,17]} /></div>
+          <h3>Skills</h3>
+          <p className="sub">
+            <img className="icon-s" src="/icons/star.svg" alt="" /> 
+            {stats.skills.total} Skills
+          </p>
+          <div className="chart">
+            <MiniChart values={stats.projects.chart.length > 0 ? stats.projects.chart : [0,0,0,0,0,0,0,0,0,0]} />
+          </div>
         </article>
 
         <article className="card">
-          <h3>Project Views</h3>
-          <p className="sub"><img className="icon-s" src="/icons/folder.svg" alt="" /> 12,000 Viewers</p>
-          <div className="chart"><MiniChart values={[5,6,9,12,11,13,15,17,16,19]} /></div>
+          <h3>Projects</h3>
+          <p className="sub">
+            <img className="icon-s" src="/icons/folder.svg" alt="" /> 
+            {stats.projects.total} Projects
+          </p>
+          <div className="chart">
+            <MiniChart values={stats.projects.chart.length > 0 ? stats.projects.chart : [0,0,0,0,0,0,0,0,0,0]} />
+          </div>
         </article>
 
         <article className="card">
-          <h3>Visitors</h3>
-          <p className="sub"><img className="icon-s" src="/icons/eye.svg" alt="" /> 12,000 Visitor</p>
-          <div className="chart"><MiniChart values={[7,8,7,11,12,15,18,21,23,22]} /></div>
+          <h3>Experience</h3>
+          <p className="sub">
+            <img className="icon-s" src="/icons/eye.svg" alt="" /> 
+            {stats.experiences.total} Experiences
+          </p>
+          <div className="chart">
+            <MiniChart values={stats.projects.chart.length > 0 ? stats.projects.chart : [0,0,0,0,0,0,0,0,0,0]} />
+          </div>
         </article>
       </section>
 
-      <section className="wide">
-        <h3>Category Performance</h3>
-        <div className="rows">
-          <div className="row">
-            <span className="label">Graphic Design</span>
-            <div className="bar" data-value="30"><span /></div>
-            <span className="pct">30%</span>
+      {categoryEntries.length > 0 && (
+        <section className="wide">
+          <h3>Category Performance</h3>
+          <div className="rows">
+            {categoryEntries.map(([category, percentage]) => (
+              <div key={category} className="row">
+                <span className="label">{category || 'Uncategorized'}</span>
+                <div className="bar" data-value={percentage}><span /></div>
+                <span className="pct">{percentage}%</span>
+              </div>
+            ))}
           </div>
-          <div className="row">
-            <span className="label">Web Design</span>
-            <div className="bar" data-value="40"><span /></div>
-            <span className="pct">40%</span>
-          </div>
-          <div className="row">
-            <span className="label">App Design</span>
-            <div className="bar" data-value="80"><span /></div>
-            <span className="pct">80%</span>
-          </div>
-          <div className="row">
-            <span className="label">3D</span>
-            <div className="bar" data-value="70"><span /></div>
-            <span className="pct">70%</span>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="activity wide">
         <h3>Recent Activity</h3>
         <ul>
-          <li>
-            <span>Updated Zoo Website</span>
-            <time>10 min ago</time>
-          </li>
-          <li>
-            <span>Added 3D Project</span>
-            <time>1 hour ago</time>
-          </li>
-          <li>
-            <span>Edited Profile Picture</span>
-            <time>Yesterday</time>
-          </li>
+          {recentActivity.length > 0 ? (
+            recentActivity.map((activity, idx) => (
+              <li key={idx}>
+                <span>{activity.text}</span>
+                <time>{activity.time}</time>
+              </li>
+            ))
+          ) : (
+            <li><span>No recent activity</span></li>
+          )}
         </ul>
       </section>
     </>

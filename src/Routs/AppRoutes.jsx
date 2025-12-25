@@ -53,7 +53,12 @@ function DashboardLayout({ children, onLogout, showLogout, setShowLogout }) {
 export default function AppRoutes() {
   const [showLogout, setShowLogout] = useState(false);
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}
+    >
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/otp" element={<OtpVerification />} />
